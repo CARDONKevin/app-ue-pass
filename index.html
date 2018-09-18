@@ -10,13 +10,20 @@
             if (! checkBrowser())
                 return;
             let sw_registration = registerServiceWorker();
-            console.log(sw_registration);
+
+            // demande la permission à l'utilisateur d'utiliser les notifications pour ce site
+            askPermission().then( function() {
+                document.getElementById("msg").innerText = "Merci !";
+            }).catch(function( msg) {
+                document.getElementById("msg").innerText = msg;
+            })
+
         }
 
 
     </script>
 </head>
 <body onload="main();">
-Bonjour
+<div id="msg"> </div>
 </body>
 </html>
