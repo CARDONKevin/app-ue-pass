@@ -11,19 +11,26 @@
                 return;
             let sw_registration = registerServiceWorker();
 
-            // demande la permission à l'utilisateur d'utiliser les notifications pour ce site
-            askPermission().then( function() {
-                document.getElementById("msg").innerText = "Merci !";
-            }).catch(function( msg) {
-                document.getElementById("msg").innerText = msg;
-            })
-
+            if ( Notification.permission === "granted") {
+                document.getElementById("msg").innerHTML = "<b>Notification activées</b>";
+            } else if ( Notification.permission === "denied") {
+                document.getElementById("msg").innerHTML = "<b>Pas de notification</b>";
+            }
         }
 
+        function notification() {
+            askPermission().then( function() {
+                document.getElementById("msg").innerHTML = "<b>Notification activées</b>";
+            }).catch( function() {
+                document.getElementById("msg").innerHTML = "<b>Pas de notification</b>";
+            })
+        }
 
     </script>
 </head>
 <body onload="main();">
-<div id="msg"> </div>
+<div id="msg">
+<button onclick="notification()"> Acceptez les notifications </button>
+ </div>
 </body>
 </html>
