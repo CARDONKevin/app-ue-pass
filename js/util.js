@@ -8,23 +8,48 @@ function checkBrowser() {
 }
 
 /**
+ * Conversion de la clef VAPID pour la subscription
+ * @param base64String
+ * @returns {Uint8Array}
+ */
+function urlBase64ToUint8Array(base64String) {
+    const padding = '='.repeat((4 - base64String.length % 4) % 4);
+    const base64 = (base64String + padding)
+        .replace(/\-/g, '+')
+        .replace(/_/g, '/');
+
+    const rawData = window.atob(base64);
+    const outputArray = new Uint8Array(rawData.length);
+
+    for (let i = 0; i < rawData.length; ++i) {
+        outputArray[i] = rawData.charCodeAt(i);
+    }
+    return outputArray;
+}
+
+/**
  * Cette fonction charge en tâche de fond le service-worker
  * Le service-worker est
  *  - downloader sur le poste client du browser
  *  - Le javascript est ecécuté
  *  - Si tout c'est passé sans erreur alors la promise est excécuté avec succé et retour un ServiceWorkerRegistration
  *
- * Le ServiceWorkerRegistration va nous permettre d'accéder à l'API Push Manager
+ * Le ServiceWorkerRegistration va nous permettre d'accéder à l'API Push Manager est suscrire au push server
  * @returns {Promise<ServiceWorkerRegistration>}
  */
-function registerServiceWorker() {
+function subscribeUserToPush() {
     return navigator.serviceWorker.register('js/service-worker.js')
         .then(function(registration) {
-            console.log('Service worker successfully registered.');
-            return registration;
+            const subscribeOptions = {
+                userVisibleOnly: true,
+                applicationServerKey: urlBase64ToUint8Array(__ApplicationServerKey)
+            };
+
+            return registration.pushManager.subscribe(subscribeOptions);
         })
-        .catch(function(err) {
-            console.error('Unable to register service worker.', err);
+        .then(function(pushSubscription) {
+            console.log('Received PushSubscription: ', JSON.stringify(pushSubscription));
+            return pushSubscription;
         });
 }
 
