@@ -49,7 +49,7 @@ function subscribeUserToPush() {
         })
         .then(function(pushSubscription) {
             console.log('Received PushSubscription: ', JSON.stringify(pushSubscription));
-            return pushSubscription;
+            return sendSubscriptionToBackEnd( pushSubscription );
         });
 }
 
@@ -75,3 +75,30 @@ function askPermission() {
     })
 }
 
+
+/**
+ * Renvoie au serveur le endpoint que la subscription a donné
+ * @param subscription
+ * @returns {Promise<Response>}
+ */
+function sendSubscriptionToBackEnd(subscription) {
+    return fetch('/api/save-subscription/', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(subscription)
+    })
+        .then(function(response) {
+            if (!response.ok) {
+                throw new Error('Bad status code from server.');
+            }
+
+            return response.json();
+        })
+        .then(function(responseData) {
+            if (!(responseData.data && responseData.data.success)) {
+                throw new Error('Bad response from server.');
+            }
+        });
+}
