@@ -1,8 +1,10 @@
 const express = require('express');
 const app = express();
 
-const dbSub = require('./subscriptions.js');
+const webpush = require('web-push');
+const vapidKeys = require('./NOTversioned/vapidKeys.js');
 
+const dbSub = require('./subscriptions.js');
 dbSub.initDb();
 
 
@@ -13,6 +15,10 @@ app.get('/', function (req, res) {
     res.send('Push App!')
 });
 
+app.get('/api/get-vapid-public-key', function (req, res) {
+    res.send({ vapidkey: vapidKeys.publicKey })
+});
+
 app.post('/api/save-subscription/', function (req, res) {
     if (!isValidSaveRequest(req, res)) {
         return;
@@ -20,7 +26,6 @@ app.post('/api/save-subscription/', function (req, res) {
 
     return dbSub.saveSubscription(req.body)
         .then(function(subscriptionId) {
-            console.log(subscriptionId)
             res.setHeader('Content-Type', 'application/json');
             res.send(JSON.stringify({ data: { success: true } }));
         })
@@ -46,7 +51,6 @@ app.listen(80, function () {
 
 const isValidSaveRequest = (req, res) => {
     // Check the request body has at least an endpoint.
-    console.log(req.body);
     if (!req.body || !req.body.endpoint) {
         // Not a valid subscription.
         res.status(400);

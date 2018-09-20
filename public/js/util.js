@@ -28,21 +28,33 @@ function urlBase64ToUint8Array(base64String) {
 }
 
 /**
- * Cette fonction charge en tâche de fond le service-worker
+ * Avant de s'enregistrer comme subscriber, on récupère la clef public VAPID
+ */
+function subscribeUserToPush() {
+    fetch('/api/get-vapid-public-key')
+        .then(function(response) {
+            return response.json();
+        })
+        .then(startServiceWorker)
+}
+
+/**
+ *  Cette fonction charge en tâche de fond le service-worker
  * Le service-worker est
  *  - downloader sur le poste client du browser
  *  - Le javascript est ecécuté
  *  - Si tout c'est passé sans erreur alors la promise est excécuté avec succé et retour un ServiceWorkerRegistration
  *
  * Le ServiceWorkerRegistration va nous permettre d'accéder à l'API Push Manager est suscrire au push server
- * @returns {Promise<ServiceWorkerRegistration>}
+ * @param jsonKey
+ * @returns {Promise<Response>}
  */
-function subscribeUserToPush() {
+function startServiceWorker(jsonKey) {
     return navigator.serviceWorker.register('js/service-worker.js')
         .then(function(registration) {
             const subscribeOptions = {
                 userVisibleOnly: true,
-                applicationServerKey: urlBase64ToUint8Array(__ApplicationServerKey)
+                applicationServerKey: urlBase64ToUint8Array(jsonKey.vapidkey)
             };
 
             return registration.pushManager.subscribe(subscribeOptions);
