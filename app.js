@@ -81,16 +81,18 @@ app.post('/api/trigger-push-msg', (req,res) => {
                     webpush.sendNotification(row.subscritor, JSON.stringify(msg))
                         .then((detail_req) => {
                             status.push( detail_req.statusCode );
+                            console.log("then:"+nbrPush);
                             if ( --nbrPush === 0)
                                 resolve( status );
                         })
                         .catch((err) => {
                             if (err.statusCode === 410) {
-                                return dbSub.delSubscription(subscription.id);
+                                dbSub.delSubscription(row.id);
                             } else {
                                 console.log('Subscription is no longer valid: ', err);
                             }
                             status.push( err.statusCode );
+                            console.log("catch:"+nbrPush);
                             if ( --nbrPush === 0)
                                 resolve( status );
                         });
