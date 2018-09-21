@@ -4,6 +4,14 @@ const app = express();
 const webpush = require('web-push');
 const vapidKeys = require('./NOTversioned/vapidKeys.js');
 
+// initialise le module webpush avec les clefs VAPId et les informations de contact
+webpush.setVapidDetails(
+    'mailto:web-push@ue.paas.fr',
+    vapidKeys.publicKey,
+    vapidKeys.privateKey
+);
+
+
 const dbSub = require('./subscriptions.js');
 dbSub.initDb();
 
@@ -11,15 +19,33 @@ dbSub.initDb();
 const bodyParser = require('body-parser');
 app.use(bodyParser.json());
 
-app.get('/', function (req, res) {
+app.get('/', (req, res) => {
     res.send('Push App!')
 });
 
-app.get('/api/get-vapid-public-key', function (req, res) {
+app.get('/api/get-vapid-public-key', (req, res) => {
     res.send({ vapidkey: vapidKeys.publicKey })
 });
 
-app.post('/api/save-subscription/', function (req, res) {
+app.get('/api/endpoints', (req, res) => {
+    dbSub.getAllEndpoints()
+        .then( (rows) => {
+            res.setHeader('Content-Type', 'application/json');
+            res.send(JSON.stringify({ list: rows }));
+        })
+        .catch( (err) => {
+            res.status(500);
+            res.setHeader('Content-Type', 'application/json');
+            res.send(JSON.stringify({
+                error: {
+                    id: 'unable-to-get-all-endpoints',
+                    message: 'Database error : '+err.message
+                }
+            }));
+        })
+});
+
+app.post('/api/save-subscription/', (req, res) => {
     if (!isValidSaveRequest(req, res)) {
         return;
     }
@@ -47,6 +73,8 @@ app.use(express.static('public'));
 app.listen(80, function () {
     console.log('Push server start!')
 });
+
+
 
 
 const isValidSaveRequest = (req, res) => {

@@ -7,12 +7,28 @@ module.exports.initDb = () => {
 
 module.exports.saveSubscription = ( body ) => {
     return new Promise((resolve, reject) => {
-        db.run("INSERT INTO subscription (endpoint) VALUES (?)", [body], function(err) {
+        db.run("INSERT INTO subscription (endpoint) VALUES (?)", [JSON.stringify(body)], function(err) {
             if (err) {
                 reject(err.message);
             }
             // return last insert id
             resolve( this.lastID );
+        });
+    })
+};
+
+module.exports.getAllEndpoints = () => {
+    return new Promise( (resolve, reject) => {
+        let sql = "SELECT endpoint FROM subscription";
+        db.all(sql, [], (err, rows) => {
+            if (err) {
+                reject( err );
+            }
+            let list = [];
+            rows.forEach( (row) => {
+                list.push( JSON.parse(row.endpoint) )
+            });
+            resolve( list );
         });
     })
 };

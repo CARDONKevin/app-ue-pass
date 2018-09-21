@@ -20,8 +20,7 @@
         function notification() {
             askPermission().then( function() {
                 document.getElementById("msg").innerHTML = "<b>Notification activées</b>";
-                let rep = subscribeUserToPush();
-                console.log(rep);
+                subscribeUserToPush();
             }).catch( function() {
                 document.getElementById("msg").innerHTML = "<b>Pas de notification</b>";
             })
