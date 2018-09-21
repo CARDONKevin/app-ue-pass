@@ -19,16 +19,24 @@ module.exports.saveSubscription = ( body ) => {
 
 module.exports.getAllEndpoints = () => {
     return new Promise( (resolve, reject) => {
-        let sql = "SELECT endpoint FROM subscription";
+        let sql = "SELECT id, endpoint FROM subscription";
         db.all(sql, [], (err, rows) => {
             if (err) {
                 reject( err );
             }
             let list = [];
             rows.forEach( (row) => {
-                list.push( JSON.parse(row.endpoint) )
+                list.push({
+                    id: row.id,
+                    subscritor: JSON.parse(row.endpoint)
+                })
             });
             resolve( list );
         });
     })
+};
+
+module.exports.delSubscription = (id) => {
+    console.log("delete : "+id)
+
 };

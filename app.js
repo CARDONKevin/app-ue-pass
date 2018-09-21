@@ -67,6 +67,41 @@ app.post('/api/save-subscription/', (req, res) => {
         });
 });
 
+app.post('/api/trigger-push-msg', (req,res) => {
+
+    let msg = req.body;
+
+    dbSub.getAllEndpoints()
+        .then( (rows) => {
+
+            let all_push = new Promise( (resolve , reject ) => {
+                let nbrPush = rows.length;
+                let status = [];
+                rows.forEach( (row) => {
+                    webpush.sendNotification(row.subscritor, JSON.stringify(msg))
+                        .then((detail_req) => {
+                            status.push( detail_req.statusCode );
+                            if ( --nbrPush === 0)
+                                resolve( status );
+                        })
+                        .catch((err) => {
+                            if (err.statusCode === 410) {
+                                return dbSub.delSubscription(subscription.id);
+                            } else {
+                                console.log('Subscription is no longer valid: ', err);
+                            }
+                            status.push( err.statusCode );
+                            if ( --nbrPush === 0)
+                                resolve( status );
+                        });
+                });
+
+            });
+            all_push.then((statusList) => {
+                res.send(JSON.stringify(statusList));
+            });
+    });
+});
 
 app.use(express.static('public'));
 
@@ -92,4 +127,9 @@ const isValidSaveRequest = (req, res) => {
         return false;
     }
     return true;
+};
+
+const triggerPushMsg = (subscription, dataToSend) => {
+    return webpush.sendNotification(subscription.subscritor, JSON.stringify(dataToSend))
+
 };
