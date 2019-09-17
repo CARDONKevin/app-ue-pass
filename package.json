@@ -15,5 +15,9 @@
   "bugs": {
     "url": "https://github.com/CARDONKevin/app-ue-pass/issues"
   },
-  "homepage": "https://github.com/CARDONKevin/app-ue-pass#readme"
+  "homepage": "https://github.com/CARDONKevin/app-ue-pass#readme",
+  "dependencies": {
+    "express": "^4.17.1",
+    "web-push": "^3.3.5"
+  }
 }
