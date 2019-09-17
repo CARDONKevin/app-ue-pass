@@ -19,6 +19,7 @@
   "homepage": "https://github.com/CARDONKevin/app-ue-pass#readme",
   "dependencies": {
     "express": "^4.17.1",
+    "sqlite3": "^4.1.0",
     "web-push": "^3.3.5"
   }
 }
