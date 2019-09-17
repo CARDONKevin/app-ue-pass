@@ -1,0 +1,19 @@
+{
+  "name": "ue-paas",
+  "version": "1.0.0",
+  "description": "Pour le serveur, on utilise le framework node Express, mais tout autre solution est viable",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/CARDONKevin/app-ue-pass.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/CARDONKevin/app-ue-pass/issues"
+  },
+  "homepage": "https://github.com/CARDONKevin/app-ue-pass#readme"
+}
