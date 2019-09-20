@@ -13,9 +13,8 @@ self.addEventListener('push', function(event) {
 
 function updateNumber(type) {
   return caches.open(CACHE_NAME).then(function(cache) {
-      return cache.match(type).then(function(response) {
-          return response.json().then(function(notificationNum) {
-              var newNotificationNum = notificationNum + 1;
+      cache.put('visible', val + 1)
+              var newNotificationNum = val + 1;
 
               return cache.put(
                   new Request(type),
@@ -25,11 +24,10 @@ function updateNumber(type) {
                       },
                   })
               ).then(function() {
+                  val++;
                   return newNotificationNum;
               });
           });
-      });
-  });
 }
 
 function getCacheNumber(type) {
@@ -38,7 +36,7 @@ function getCacheNumber(type) {
             return response.json().then(function(notificationNum) {
                 if (notificationNum > 0){
                     document.getElementById("not_env").innerHTML = document.getElementById("not_env").innerHTML + notificationNum;
-                    console.log(document.getElementById("not_env").innerHTML + notificationNum.entries.length);
+                    console.log(document.getElementById("not_env").innerHTML + notificationNum);
                 }  else {
                     document.getElementById("not_env").innerHTML = document.getElementById("not_env").innerHTML + 0;
                     console.log(document.getElementById("not_env").innerHTML + 0);
