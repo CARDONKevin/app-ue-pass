@@ -5,13 +5,14 @@
     <title>Title</title>
     <script type="text/javascript" src="js/util.js"></script>
     <script>
-
+        var not_max = 4;
         function main() {
             if (! checkBrowser())
                 return;
 
             if ( Notification.permission === "granted") {
                 document.getElementById("msg").innerHTML = "<b>Notification activées</b>";
+                document.getElementById("not_max").innerHTML = document.getElementById("not_max").innerHTML + not_max;
             } else if ( Notification.permission === "denied") {
                 document.getElementById("msg").innerHTML = "<b>Pas de notification</b>";
             }
@@ -32,5 +33,7 @@
 <div id="msg">
 <button onclick="notification()"> Acceptez les notifications </button>
  </div>
+<div id="not_env"> Nombre de notification envoyé </div>
+<div id="not_max"> Max de notification possibles </div>
 </body>
 </html>
