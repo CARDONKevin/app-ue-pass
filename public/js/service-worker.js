@@ -4,9 +4,10 @@ self.addEventListener('push', function(event) {
     let msg = event.data.json()
     const promiseChain = self.registration.showNotification(msg.title, msg.options);
 
-    event.waitUntil(updateNumber('visible').then(function(num) {
+
+    event.waitUntil(updateNumber('visible').then(function() {
         getCacheNumber();
-        return promiseChain;
+        promiseChain;
       }));
 });
 
