@@ -38,11 +38,13 @@ function getCacheNumber(type) {
             return response.json().then(function(notificationNum) {
                 if (notificationNum > 0){
                     document.getElementById("not_env").innerHTML = document.getElementById("not_env").innerHTML + notificationNum;
-                    console.log(document.getElementById("not_env").innerHTML + notificationNum);
+                    console.log(document.getElementById("not_env").innerHTML + notificationNum.entries.length);
                 }  else {
                     document.getElementById("not_env").innerHTML = document.getElementById("not_env").innerHTML + 0;
                     console.log(document.getElementById("not_env").innerHTML + 0);
                 }
+                document.getElementById("not_max").innerHTML = document.getElementById("not_max").innerHTML + 4;
+
             });
         });
     });
